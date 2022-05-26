@@ -1,22 +1,13 @@
-import {
-  alpha,
-  AppBar,
-  Button,
-  InputBase,
-  styled,
-  Toolbar,
-  Typography,
-} from "@mui/material"
-import Icon from "@mui/icons-material/BookRounded"
+import { AppBar, Button, Toolbar, Typography } from "@mui/material"
+import Icon from "@mui/icons-material/MenuBook"
 import Link from "next/link"
-import SearchIcon from "@mui/icons-material/Search"
 import { Box } from "@mui/system"
 
 function Header() {
   return (
     <AppBar position="relative">
       <Toolbar>
-        <Icon sx={{ mr: 2 }} />
+        <Icon sx={{ mr: 2, transform: "scale(1.5)" }} />
         <Link href="/">
           <Typography
             variant="h6"
