@@ -1,7 +1,8 @@
-import { AppBar, Button, Toolbar, Typography } from "@mui/material"
+import { AppBar, Button, IconButton, Toolbar, Typography } from "@mui/material"
 import Icon from "@mui/icons-material/MenuBook"
 import Link from "next/link"
 import { Box } from "@mui/system"
+import { Star } from "@mui/icons-material"
 
 function Header() {
   return (
@@ -19,11 +20,24 @@ function Header() {
           </Typography>
         </Link>
         <Box sx={{ flexGrow: 1 }} />
-        <Link href="/signin">
-          <Button color="inherit" sx={{ mr: 1, textTransform: "none" }}>
-            Sign In
-          </Button>
-        </Link>
+        {false ? (
+          <>
+            <Button color="inherit" sx={{ mr: 1, textTransform: "none" }}>
+              Sign Out
+            </Button>
+            <Link href="/book/favorites">
+              <IconButton>
+                <Star />
+              </IconButton>
+            </Link>
+          </>
+        ) : (
+          <Link href="/signin">
+            <Button color="inherit" sx={{ mr: 1, textTransform: "none" }}>
+              Sign In
+            </Button>
+          </Link>
+        )}
       </Toolbar>
     </AppBar>
   )
