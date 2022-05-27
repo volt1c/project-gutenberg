@@ -1,3 +1,4 @@
+import { firebaseAuth } from "../firebase"
 import {
   createContext,
   PropsWithChildren,
@@ -5,26 +6,33 @@ import {
   useEffect,
   useState,
 } from "react"
-import { firebaseAuth } from "../firebase"
-import firebase from "firebase/compat/app"
+import {
+  browserSessionPersistence,
+  createUserWithEmailAndPassword,
+  onAuthStateChanged,
+  sendPasswordResetEmail,
+  setPersistence,
+  signInWithEmailAndPassword,
+  User,
+} from "firebase/auth"
 
 interface IAuthContext {
-  user: firebase.User | null
+  user: User | null
   resetPassword: (email: string) => void
   signUp: (email: string, pass: string) => void
   signIn: (email: string, pass: string, rmember?: boolean) => void
   signOut: () => void
 }
 
-function buildContextValue(user?: firebase.User | null) {
+function buildContextValue(user?: User | null) {
   return {
     signOut: async () => firebaseAuth.signOut(),
     signUp: async (email: string, pass: string) =>
-      firebaseAuth.createUserWithEmailAndPassword(email, pass),
+      createUserWithEmailAndPassword(firebaseAuth, email, pass),
     signIn: async (email: string, pass: string, remember = false) =>
-      firebaseAuth.signInWithEmailAndPassword(email, pass),
+      signInWithEmailAndPassword(firebaseAuth, email, pass),
     resetPassword: async (email: string) =>
-      firebaseAuth.sendPasswordResetEmail(email),
+      sendPasswordResetEmail(firebaseAuth, email),
     user: user ?? null,
   }
 }
@@ -36,9 +44,9 @@ function useAuthContext() {
 }
 
 function AuthProvider({ children }: PropsWithChildren<{}>) {
-  const [user, setUser] = useState<firebase.User | null>()
+  const [user, setUser] = useState<User | null>()
 
-  useEffect(() => firebaseAuth.onAuthStateChanged((user) => setUser(user)), [])
+  useEffect(() => onAuthStateChanged(firebaseAuth, (user) => setUser(user)), [])
 
   return (
     <AuthContext.Provider value={buildContextValue(user)}>
