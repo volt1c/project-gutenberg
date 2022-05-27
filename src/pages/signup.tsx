@@ -10,15 +10,32 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined"
 import Typography from "@mui/material/Typography"
 import Container from "@mui/material/Container"
 import { createTheme, ThemeProvider } from "@mui/material/styles"
+import { IAuthResult, ResultType } from "../types/authResult"
+import { Alert } from "@mui/material"
+import { useAuthContext } from "../contexts/AuthContext"
 
 export default function SignUp() {
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const [isWaiting, setIsWaiting] = React.useState(false)
+  const [result, setResult] = React.useState<IAuthResult>({
+    type: ResultType.None,
+    content: "",
+  })
+
+  const { signUp } = useAuthContext()
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     const data = new FormData(event.currentTarget)
-    console.log({
-      email: data.get("email"),
-      password: data.get("password"),
-    })
+    try {
+      await signUp(data.get("email") as string, data.get("password") as string)
+      setResult({
+        type: ResultType.Success,
+        content: "Sign up successed...",
+      })
+    } catch {
+      setResult({ type: ResultType.Error, content: "Sign up filed..." })
+    }
+    setIsWaiting(false)
   }
 
   return (
@@ -39,6 +56,13 @@ export default function SignUp() {
           <Typography component="h1" variant="h5">
             Sign up
           </Typography>
+
+          {result?.type !== "none" && (
+            <Alert sx={{ mt: 1 }} severity={result?.type}>
+              {result?.content}
+            </Alert>
+          )}
+
           <Box
             component="form"
             noValidate
@@ -73,6 +97,7 @@ export default function SignUp() {
               fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
+              disabled={isWaiting}
             >
               Sign Up
             </Button>

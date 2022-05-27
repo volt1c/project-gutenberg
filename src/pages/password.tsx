@@ -3,23 +3,45 @@ import Avatar from "@mui/material/Avatar"
 import Button from "@mui/material/Button"
 import CssBaseline from "@mui/material/CssBaseline"
 import TextField from "@mui/material/TextField"
-import FormControlLabel from "@mui/material/FormControlLabel"
-import Checkbox from "@mui/material/Checkbox"
 import Link from "@mui/material/Link"
 import Grid from "@mui/material/Grid"
 import Box from "@mui/material/Box"
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined"
 import Typography from "@mui/material/Typography"
 import Container from "@mui/material/Container"
+import { useAuthContext } from "../contexts/AuthContext"
+import { Alert } from "@mui/material"
+import { IAuthResult, ResultType } from "../types/authResult"
 
 function ResetPassword() {
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const [isWaiting, setIsWaiting] = React.useState(false)
+  const [result, setResult] = React.useState<IAuthResult>({
+    type: ResultType.None,
+    content: "",
+  })
+
+  const { resetPassword } = useAuthContext()
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     const data = new FormData(event.currentTarget)
-    console.log({
-      email: data.get("email"),
-      password: data.get("password"),
-    })
+
+    setIsWaiting(true)
+
+    try {
+      await resetPassword((data.get("email") as string) ?? "")
+      setResult({
+        type: ResultType.Success,
+        content: "Link to reset your password has been send...",
+      })
+    } catch {
+      setResult({
+        type: ResultType.Error,
+        content: "Something went wrong...",
+      })
+    }
+
+    setIsWaiting(false)
   }
 
   return (
@@ -40,6 +62,13 @@ function ResetPassword() {
           <Typography component="h1" variant="h5">
             Reset password
           </Typography>
+
+          {result?.type !== "none" && (
+            <Alert sx={{ mt: 1 }} severity={result?.type}>
+              {result?.content}
+            </Alert>
+          )}
+
           <Box
             component="form"
             onSubmit={handleSubmit}
@@ -61,6 +90,7 @@ function ResetPassword() {
               fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
+              disabled={isWaiting}
             >
               Reset password
             </Button>

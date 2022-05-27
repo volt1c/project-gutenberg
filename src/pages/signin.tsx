@@ -11,15 +11,47 @@ import Box from "@mui/material/Box"
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined"
 import Typography from "@mui/material/Typography"
 import Container from "@mui/material/Container"
+import { useAuthContext } from "../contexts/AuthContext"
+import { Alert } from "@mui/material"
+import { IAuthResult, ResultType } from "../types/authResult"
 
 function SignIn() {
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const [isWaiting, setIsWaiting] = React.useState(false)
+  const [result, setResult] = React.useState<IAuthResult>({
+    type: ResultType.None,
+    content: "",
+  })
+
+  const { user, signIn } = useAuthContext()
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
+
+    if (user) {
+      setIsWaiting(false)
+      return setResult({
+        type: ResultType.Info,
+        content: "You are arleady signed in",
+      })
+    }
+
+    setIsWaiting(true)
+
     const data = new FormData(event.currentTarget)
-    console.log({
-      email: data.get("email"),
-      password: data.get("password"),
-    })
+    try {
+      await signIn(
+        (data.get("email") as string) ?? "",
+        (data.get("password") as string) ?? ""
+      )
+
+      setResult({
+        type: ResultType.Success,
+        content: "Sign in successed...",
+      })
+    } catch {
+      setResult({ type: ResultType.Error, content: "Sign in filed..." })
+    }
+    setIsWaiting(false)
   }
 
   return (
@@ -40,6 +72,13 @@ function SignIn() {
           <Typography component="h1" variant="h5">
             Sign in
           </Typography>
+
+          {result?.type !== "none" && (
+            <Alert sx={{ mt: 1 }} severity={result?.type}>
+              {result?.content}
+            </Alert>
+          )}
+
           <Box
             component="form"
             onSubmit={handleSubmit}
@@ -75,6 +114,7 @@ function SignIn() {
               fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
+              disabled={isWaiting}
             >
               Sign In
             </Button>
