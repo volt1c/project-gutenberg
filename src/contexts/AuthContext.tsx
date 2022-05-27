@@ -12,7 +12,7 @@ interface IAuthContext {
   user: firebase.User | null
   resetPassword: (email: string) => void
   signUp: (email: string, pass: string) => void
-  signIn: (email: string, pass: string) => void
+  signIn: (email: string, pass: string, rmember?: boolean) => void
   signOut: () => void
 }
 
@@ -21,7 +21,7 @@ function buildContextValue(user?: firebase.User | null) {
     signOut: async () => firebaseAuth.signOut(),
     signUp: async (email: string, pass: string) =>
       firebaseAuth.createUserWithEmailAndPassword(email, pass),
-    signIn: async (email: string, pass: string) =>
+    signIn: async (email: string, pass: string, remember = false) =>
       firebaseAuth.signInWithEmailAndPassword(email, pass),
     resetPassword: async (email: string) =>
       firebaseAuth.sendPasswordResetEmail(email),

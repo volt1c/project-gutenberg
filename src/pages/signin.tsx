@@ -1,4 +1,3 @@
-import * as React from "react"
 import Avatar from "@mui/material/Avatar"
 import Button from "@mui/material/Button"
 import CssBaseline from "@mui/material/CssBaseline"
@@ -14,17 +13,19 @@ import Container from "@mui/material/Container"
 import { useAuthContext } from "../contexts/AuthContext"
 import { Alert } from "@mui/material"
 import { IAuthResult, ResultType } from "../types/authResult"
+import { FormEvent, useRef, useState } from "react"
 
 function SignIn() {
-  const [isWaiting, setIsWaiting] = React.useState(false)
-  const [result, setResult] = React.useState<IAuthResult>({
+  const [hasRemember, setHasRemember] = useState(false)
+  const [isWaiting, setIsWaiting] = useState(false)
+  const [result, setResult] = useState<IAuthResult>({
     type: ResultType.None,
     content: "",
   })
 
   const { user, signIn } = useAuthContext()
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
 
     if (user) {
@@ -39,9 +40,12 @@ function SignIn() {
 
     const data = new FormData(event.currentTarget)
     try {
+      console.log(hasRemember)
+
       await signIn(
         (data.get("email") as string) ?? "",
-        (data.get("password") as string) ?? ""
+        (data.get("password") as string) ?? "",
+        hasRemember ?? false
       )
 
       setResult({
@@ -74,7 +78,7 @@ function SignIn() {
           </Typography>
 
           {result?.type !== "none" && (
-            <Alert sx={{ mt: 1 }} severity={result?.type}>
+            <Alert sx={{ mt: 1, w: 1 }} severity={result?.type}>
               {result?.content}
             </Alert>
           )}
@@ -106,7 +110,13 @@ function SignIn() {
               autoComplete="current-password"
             />
             <FormControlLabel
-              control={<Checkbox value="remember" color="primary" />}
+              control={
+                <Checkbox
+                  onChange={(e) => setHasRemember(e.target.checked)}
+                  name="remember"
+                  color="primary"
+                />
+              }
               label="Remember me"
             />
             <Button
