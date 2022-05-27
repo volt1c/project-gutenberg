@@ -25,7 +25,7 @@ function BooksFavoritesPage() {
   useEffect(() => {
     if (!user) Router.push("/signin")
     if (user) setVisible(true)
-  }, [])
+  })
 
   return (
     <main>
