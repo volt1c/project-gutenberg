@@ -29,8 +29,12 @@ function buildContextValue(user?: User | null) {
     signOut: async () => firebaseAuth.signOut(),
     signUp: async (email: string, pass: string) =>
       createUserWithEmailAndPassword(firebaseAuth, email, pass),
-    signIn: async (email: string, pass: string, remember = false) =>
-      signInWithEmailAndPassword(firebaseAuth, email, pass),
+    signIn: async (email: string, pass: string, remember = false) => {
+      if (!remember)
+        await setPersistence(firebaseAuth, browserSessionPersistence)
+
+      return signInWithEmailAndPassword(firebaseAuth, email, pass)
+    },
     resetPassword: async (email: string) =>
       sendPasswordResetEmail(firebaseAuth, email),
     user: user ?? null,
