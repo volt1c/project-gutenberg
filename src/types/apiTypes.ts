@@ -23,3 +23,21 @@ export interface IBook {
   agents: IAgent[]
   resources: IResource[]
 }
+
+export interface IBookPage {
+  count: number
+  next: string | null
+  previous: string | null
+  results: IBook[]
+}
+
+export interface IBookFilters {
+  type?: string
+  languages?: string
+  title_contains?: string
+  description_contains?: string
+  downloads_range_min?: number
+  downloads_range_max?: number
+  has_bookshelf?: string
+  page?: number
+}
