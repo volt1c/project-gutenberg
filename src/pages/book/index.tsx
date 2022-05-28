@@ -3,14 +3,26 @@ import Grid from "@mui/material/Grid"
 import Container from "@mui/material/Container"
 import { Paper, InputBase, IconButton, Stack } from "@mui/material"
 import SearchIcon from "@mui/icons-material/Search"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import FiltersDialog from "../../components/FiltersDialog"
 import BookItem from "../../components/BookItem"
-
-const cards = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+import { IBook } from "../../types/apiTypes"
+import { fetchBooks } from "../../utils/fetchApi"
+import InfiniteScroll from "react-infinite-scroll-component"
 
 function BookPage() {
   const [open, setOpen] = useState(false)
+  const [books, setBooks] = useState<IBook[]>([])
+  const [count, setCount] = useState(0)
+  const [page, setPage] = useState(1)
+
+  useEffect(() => {
+    fetchBooks().then((bookPage) => {
+      setBooks(bookPage.results)
+      setCount(bookPage.count)
+      setPage(page + 1)
+    })
+  }, [])
 
   return (
     <main>
@@ -38,30 +50,26 @@ function BookPage() {
             Filters
           </Button>
         </Stack>
-        <Grid container spacing={4} columns={{ xs: 8, sm: 12, md: 16 }}>
-          {cards.map((card) => (
-            <Grid item key={card} xs={12} sm={6} md={4}>
-              <BookItem
-                book={{
-                  id: 0,
-                  type: "Text",
-                  title: "Example Book",
-                  description: "Some great description",
-                  downloads: 2137,
-                  license: "Some license",
-                  subjects: [],
-                  bookshelves: [],
-                  languages: [],
-                  agents: [
-                    { id: 0, person: "Jan Kowalski", type: "" },
-                    { id: 1, person: "Joe Black", type: "" },
-                  ],
-                  resources: [],
-                }}
-              />
-            </Grid>
-          ))}
-        </Grid>
+        <InfiniteScroll
+          next={() => {
+            fetchBooks({ page }).then((bookPage) => {
+              setBooks([...books, ...bookPage.results])
+              setPage(page + 1)
+            })
+          }}
+          endMessage={<>end...</>}
+          hasMore={books.length < count}
+          loader={<>Loading...</>}
+          dataLength={books.length}
+        >
+          <Grid container spacing={4} columns={{ xs: 8, sm: 12, md: 16 }}>
+            {books.map((book, idx) => (
+              <Grid item key={idx} xs={12} sm={6} md={4}>
+                <BookItem book={book} />
+              </Grid>
+            ))}
+          </Grid>
+        </InfiniteScroll>
       </Container>
       <FiltersDialog
         open={open}
