@@ -27,12 +27,15 @@ import { useEffect, useState } from "react"
 import { IBook } from "../../types/apiTypes"
 import { fetchBook } from "../../utils/fetchApi"
 import { defineResourceMeta } from "../../utils/bookResources"
+import ReadDialog from "../../components/ReadDialog"
 
 function BookIdPage() {
   const router = useRouter()
   const { id } = router.query
 
   const [book, setBook] = useState<IBook>()
+  const [open, setOpen] = useState(false)
+  const [src, setSrc] = useState("")
 
   useEffect(() => {
     if (typeof id == "string") {
@@ -104,7 +107,14 @@ function BookIdPage() {
                   <ListItem
                     key={idx}
                     secondaryAction={
-                      <IconButton edge="end" aria-label="delete">
+                      <IconButton
+                        edge="end"
+                        aria-label="delete"
+                        onClick={() => {
+                          setSrc(r.uri)
+                          setOpen(true)
+                        }}
+                      >
                         <Delete />
                       </IconButton>
                     }
@@ -134,6 +144,7 @@ function BookIdPage() {
           </Grid>
         </Container>
       </Box>
+      <ReadDialog open={open} onClose={() => setOpen(false)} bookSrc={src} />
     </main>
   )
 }
