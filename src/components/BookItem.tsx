@@ -33,8 +33,7 @@ function BookItem({
         image={
           resources
             .filter((r) => r.type.includes("image/jpeg"))
-            .find((r) => r.uri.includes("medium"))?.uri ??
-          "https://source.unsplash.com/random"
+            .find((r) => r.uri.includes("medium"))?.uri ?? "/bookcover.jpg"
         }
         alt="random"
       />
