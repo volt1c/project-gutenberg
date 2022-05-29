@@ -43,9 +43,9 @@ export function defineResourceMeta(resource: IResource) {
   if (resource.uri.includes("images")) meta.hasImages = true
   if (resource.uri.includes("noimages")) meta.hasImages = false
 
-  meta.imageSize = Object.values(ImageSize).find(
-    (v) => resource.type.includes(v) ?? undefined
-  ) as ImageSize | undefined
+  meta.imageSize = (Object.values(ImageSize).find((v) =>
+    resource.uri.includes(v)
+  ) ?? undefined) as ImageSize | undefined
 
   return meta
 }
