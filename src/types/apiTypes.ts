@@ -32,6 +32,7 @@ export interface IBookPage {
 }
 
 export interface IBookFilters {
+  search?: string
   type?: string
   languages?: string
   title_contains?: string
@@ -39,5 +40,14 @@ export interface IBookFilters {
   downloads_range_min?: number
   downloads_range_max?: number
   has_bookshelf?: string
+  has_resource_type?: string
+  has_agent_type?: string
+  agent_name_contains?: string
+  agent_alias_contains?: string
+  agent_webpage_contains?: string
+  agent_birth_date_range_min?: string
+  agent_birth_date_range_max?: string
+  agent_death_date_range_min?: string
+  agent_death_date_range_max?: string
   page?: number
 }
