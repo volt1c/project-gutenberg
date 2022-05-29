@@ -27,7 +27,7 @@ function FiltersDialog({
   defaultFilters,
 }: FiltersDialogProps) {
   return (
-    <Dialog onClose={onClose} open={open}>
+    <Dialog onClose={onClose} open={open} scroll="body">
       <form
         onSubmit={(e) => {
           e.preventDefault()
