@@ -10,8 +10,11 @@ import {
 import type { NextPage } from "next"
 import Head from "next/head"
 import SearchIcon from "@mui/icons-material/Search"
+import { FormEvent } from "react"
+import { useRouter } from "next/router"
 
 const Home: NextPage = () => {
+  const router = useRouter()
   return (
     <div>
       <Head>
@@ -41,10 +44,10 @@ const Home: NextPage = () => {
             paragraph
           >
             Choose among free epub and Kindle eBooks, download them or read them
-            online. You will find the world’s great literature here, with focus
-            on older works for which U.S. copyright has expired. Thousands of
-            volunteers digitized and diligently proofread the eBooks, for you to
-            enjoy.
+            online. You will find the world&apos;s great literature here, with
+            focus on older works for which U.S. copyright has expired. Thousands
+            of volunteers digitized and diligently proofread the eBooks, for you
+            to enjoy.
           </Typography>
           <Stack
             sx={{ pt: 4 }}
@@ -54,6 +57,12 @@ const Home: NextPage = () => {
           >
             <Paper
               component="form"
+              onSubmit={(event: FormEvent<HTMLFormElement>) => {
+                event.preventDefault()
+
+                const data = new FormData(event.currentTarget)
+                router.push(`/book?search=${data.get("search")}`)
+              }}
               sx={{
                 p: "2px 4px",
                 display: "flex",
@@ -64,7 +73,10 @@ const Home: NextPage = () => {
               <InputBase
                 sx={{ ml: 1, flex: 1 }}
                 placeholder="Search for books..."
-                inputProps={{ "aria-label": "search for books" }}
+                inputProps={{
+                  "aria-label": "search for books",
+                  name: "search",
+                }}
               />
               <IconButton type="submit" sx={{ p: "10px" }} aria-label="search">
                 <SearchIcon />
