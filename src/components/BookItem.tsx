@@ -31,7 +31,9 @@ function BookItem({
         }}
         component="img"
         image={
-          resources.find((r) => r.type.includes("image/jpeg"))?.uri ??
+          resources
+            .filter((r) => r.type.includes("image/jpeg"))
+            .find((r) => r.uri.includes("medium"))?.uri ??
           "https://source.unsplash.com/random"
         }
         alt="random"
