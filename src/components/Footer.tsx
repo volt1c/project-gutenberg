@@ -34,7 +34,7 @@ function Footer() {
     >
       <Container maxWidth="sm">
         <Typography variant="body1" textAlign="center">
-          Site created as reqruitment task
+          Site created as recruitment task
         </Typography>
         <Copyright />
       </Container>
