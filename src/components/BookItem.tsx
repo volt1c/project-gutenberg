@@ -25,6 +25,10 @@ function BookItem({
       }}
     >
       <CardMedia
+        sx={{
+          objectFit: "contain",
+          maxHeight: "640px",
+        }}
         component="img"
         image={
           resources.find((r) => r.type.includes("image/jpeg"))?.uri ??
