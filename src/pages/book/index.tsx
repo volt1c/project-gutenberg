@@ -6,7 +6,7 @@ import SearchIcon from "@mui/icons-material/Search"
 import { FormEvent, useEffect, useRef, useState } from "react"
 import FiltersDialog from "../../components/FiltersDialog"
 import BookItem from "../../components/BookItem"
-import { IBook, IBookFilters } from "../../types/apiTypes"
+import { IBook, IBookFilters } from "../../types/api"
 import { fetchBooks } from "../../utils/fetchApi"
 import InfiniteScroll from "react-infinite-scroll-component"
 import { useRouter } from "next/router"
@@ -43,12 +43,14 @@ function BookPage() {
   }
 
   useEffect(() => {
+    if (!router.isReady) return
+
     fetchBooks({ ...router.query }).then((bookPage) => {
       setBooks(bookPage.results)
       setCount(bookPage.count)
       setPage(page + 1)
     })
-  }, [])
+  }, [router.query])
 
   return (
     <main>
@@ -114,7 +116,10 @@ function BookPage() {
         defaultFilters={{ ...(router.query as IBookFilters) }}
         open={open}
         onClose={() => setOpen(false)}
-        onApply={(f) => search({ search: searchInput.current?.value, ...f })}
+        onApply={(f) => {
+          search({ search: searchInput.current?.value, ...f })
+          setOpen(false)
+        }}
       />
     </main>
   )
