@@ -5,13 +5,12 @@ import {
   DialogActions,
   DialogContent,
   InputLabel,
-  MenuItem,
-  Select,
   FormControl,
   TextField,
   Stack,
 } from "@mui/material"
-import { IBookFilters } from "../types/apiTypes"
+import { IBookFilters } from "../types/api/book"
+import SelectLanguage from "./SelectLanguage"
 
 export interface FiltersDialogProps {
   open: boolean
@@ -53,13 +52,11 @@ function FiltersDialog({
 
           <FormControl sx={{ my: 1 }} fullWidth>
             <InputLabel>Language</InputLabel>
-            <Select
+            <SelectLanguage
               label="Language"
               name="languages"
               defaultValue={defaultFilters?.languages ?? ""}
-            >
-              <MenuItem value="">All</MenuItem>
-            </Select>
+            />
           </FormControl>
 
           <FormControl sx={{ my: 1 }} fullWidth>
