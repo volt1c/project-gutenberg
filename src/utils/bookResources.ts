@@ -1,4 +1,4 @@
-import { IResource } from "../types/apiTypes"
+import { IResource } from "../types/api/book"
 
 export interface IResourceMeta {
   type: ResourceType
@@ -48,4 +48,10 @@ export function defineResourceMeta(resource: IResource) {
   ) ?? undefined) as ImageSize | undefined
 
   return meta
+}
+
+export function findWebsiteResource(resources: IResource[]) {
+  return resources
+    .map((r) => ({ r, m: defineResourceMeta(r) }))
+    .find(({ m }) => !m.isZip && m.type == ResourceType.Html)?.r
 }
