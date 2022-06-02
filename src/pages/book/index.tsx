@@ -1,29 +1,29 @@
 import Button from "@mui/material/Button"
-import Grid from "@mui/material/Grid"
 import Container from "@mui/material/Container"
 import { Paper, InputBase, IconButton, Stack } from "@mui/material"
 import SearchIcon from "@mui/icons-material/Search"
 import { FormEvent, useEffect, useRef, useState } from "react"
 import FiltersDialog from "../../components/FiltersDialog"
-import BookItem from "../../components/BookItem"
 import { IBook, IBookFilters } from "../../types/api"
-import { fetchBooks } from "../../utils/fetchApi"
-import InfiniteScroll from "react-infinite-scroll-component"
+import { fetchBooksWithFilters } from "../../utils/fetchApi"
 import { useRouter } from "next/router"
+import InfiniteScrollBook from "../../components/BookScroll"
 
 function BookPage() {
   const [open, setOpen] = useState(false)
   const [books, setBooks] = useState<IBook[]>([])
-  const [count, setCount] = useState(0)
+  const [count, setCount] = useState(-1)
   const [page, setPage] = useState(1)
 
   const searchInput = useRef<HTMLInputElement>()
 
   const router = useRouter()
 
+  const hasMore = () => books.length !== 0 && books.length < count
+
   const search = async (f: IBookFilters) => {
     setBooks([])
-    setCount(0)
+    setCount(-1)
     setPage(1)
 
     router.push(
@@ -35,7 +35,7 @@ function BookPage() {
       { shallow: true }
     )
 
-    fetchBooks(f).then((bookPage) => {
+    fetchBooksWithFilters(f).then((bookPage) => {
       setBooks(bookPage.results)
       setCount(bookPage.count)
       setPage(page + 1)
@@ -45,11 +45,14 @@ function BookPage() {
   useEffect(() => {
     if (!router.isReady) return
 
-    fetchBooks({ ...router.query }).then((bookPage) => {
+    fetchBooksWithFilters({ ...router.query }).then((bookPage) => {
       setBooks(bookPage.results)
       setCount(bookPage.count)
       setPage(page + 1)
     })
+
+    if (searchInput.current)
+      searchInput.current.value = router.query.search?.toString() ?? ""
   }, [router.query])
 
   return (
@@ -87,30 +90,17 @@ function BookPage() {
             Filters
           </Button>
         </Stack>
-        {books.length === 0 ? (
-          <>Loading...</>
-        ) : (
-          <InfiniteScroll
-            next={() => {
-              fetchBooks({ page }).then((bookPage) => {
-                setBooks([...books, ...bookPage.results])
-                setPage(page + 1)
-              })
-            }}
-            endMessage={<>end...</>}
-            hasMore={books.length !== 0 && books.length < count}
-            loader={<>Loading...</>}
-            dataLength={books.length}
-          >
-            <Grid container spacing={4} columns={{ xs: 8, sm: 12, md: 16 }}>
-              {books.map((book, idx) => (
-                <Grid item key={idx} xs={12} sm={6} md={4}>
-                  <BookItem book={book} />
-                </Grid>
-              ))}
-            </Grid>
-          </InfiniteScroll>
-        )}
+        <InfiniteScrollBook
+          next={() => {
+            fetchBooksWithFilters({ page }).then((bookPage) => {
+              setBooks([...books, ...bookPage.results])
+              setPage(page + 1)
+            })
+          }}
+          hasMore={hasMore()}
+          books={books}
+          count={count}
+        />
       </Container>
       <FiltersDialog
         defaultFilters={{ ...(router.query as IBookFilters) }}
