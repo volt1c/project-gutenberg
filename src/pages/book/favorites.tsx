@@ -1,5 +1,4 @@
 import Button from "@mui/material/Button"
-import Grid from "@mui/material/Grid"
 import Container from "@mui/material/Container"
 import { Paper, InputBase, IconButton, Stack } from "@mui/material"
 import SearchIcon from "@mui/icons-material/Search"
@@ -7,20 +6,37 @@ import { useEffect, useState } from "react"
 import FiltersDialog from "../../components/FiltersDialog"
 import Router from "next/router"
 import { useAuthContext } from "../../contexts/AuthContext"
-import BookItem from "../../components/BookItem"
-
-const cards = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+import { getFavoritesByUserUid } from "../../firebase/firestore"
+import { IBook } from "../../types/api"
+import { fetchBooksByIds } from "../../utils/fetchApi"
+import BookScroll from "../../components/BookScroll"
 
 function BooksFavoritesPage() {
   const [open, setOpen] = useState(false)
+  const [count, setCount] = useState(-1)
   const [visible, setVisible] = useState(false)
+  const [books, setBooks] = useState<IBook[]>([])
 
-  const { user } = useAuthContext()
+  const auth = useAuthContext()
+  const { user, isReady } = auth
+
+  if (user) (async () => console.log(await getFavoritesByUserUid(user.uid)))()
 
   useEffect(() => {
+    if (!isReady) return
     if (!user) Router.push("/signin")
-    if (user) setVisible(true)
-  })
+    if (user) {
+      setVisible(true)
+
+      getFavoritesByUserUid(user?.uid).then((favorites) => {
+        setCount(favorites.length)
+
+        fetchBooksByIds(favorites.map((f) => f.book_id)).then((b) => {
+          setBooks(b)
+        })
+      })
+    }
+  }, [isReady, user])
 
   return (
     <main>
@@ -49,30 +65,12 @@ function BooksFavoritesPage() {
               Filters
             </Button>
           </Stack>
-          <Grid container spacing={4} columns={{ xs: 8, sm: 12, md: 16 }}>
-            {cards.map((card) => (
-              <Grid item key={card} xs={12} sm={6} md={4}>
-                <BookItem
-                  book={{
-                    id: 0,
-                    type: "Text",
-                    title: "Example Book",
-                    description: "Some great description",
-                    downloads: 2137,
-                    license: "Some license",
-                    subjects: [],
-                    bookshelves: [],
-                    languages: [],
-                    agents: [
-                      { id: 0, person: "Jan Kowalski", type: "" },
-                      { id: 1, person: "Joe Black", type: "" },
-                    ],
-                    resources: [],
-                  }}
-                />
-              </Grid>
-            ))}
-          </Grid>
+          <BookScroll
+            count={count}
+            next={() => {}}
+            hasMore={false}
+            books={books}
+          />
         </Container>
       )}
       <FiltersDialog
