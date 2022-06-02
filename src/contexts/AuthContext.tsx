@@ -22,9 +22,10 @@ interface IAuthContext {
   signUp: (email: string, pass: string) => void
   signIn: (email: string, pass: string, rmember?: boolean) => void
   signOut: () => void
+  isReady: boolean
 }
 
-function buildContextValue(user?: User | null) {
+function buildContextValue(user?: User | null, isReady: boolean = false) {
   return {
     signOut: async () => firebaseAuth.signOut(),
     signUp: async (email: string, pass: string) =>
@@ -38,6 +39,7 @@ function buildContextValue(user?: User | null) {
     resetPassword: async (email: string) =>
       sendPasswordResetEmail(firebaseAuth, email),
     user: user ?? null,
+    isReady: isReady,
   }
 }
 
@@ -49,11 +51,17 @@ function useAuthContext() {
 
 function AuthProvider({ children }: PropsWithChildren<{}>) {
   const [user, setUser] = useState<User | null>()
+  const [isReady, setIsReady] = useState(false)
 
-  useEffect(() => onAuthStateChanged(firebaseAuth, (user) => setUser(user)), [])
+  useEffect(() => {
+    onAuthStateChanged(firebaseAuth, (user) => {
+      setUser(user)
+      setIsReady(true)
+    })
+  }, [])
 
   return (
-    <AuthContext.Provider value={buildContextValue(user)}>
+    <AuthContext.Provider value={buildContextValue(user, isReady)}>
       {children}
     </AuthContext.Provider>
   )
