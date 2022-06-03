@@ -20,7 +20,7 @@ function BookScroll({ next, hasMore, books, count }: Props) {
       loader={<>Loading...</>}
       dataLength={books.length}
     >
-      <Grid container spacing={4} columns={{ xs: 8, sm: 12, md: 16 }}>
+      <Grid container spacing={4} columns={{ xs: 12, sm: 16, md: 20 }}>
         {[
           ...books,
           ...(count == -1 || hasMore
