@@ -1,4 +1,4 @@
-import { Grid } from "@mui/material"
+import { Grid, CircularProgress } from "@mui/material"
 import InfiniteScroll from "react-infinite-scroll-component"
 import { IBook } from "../types/api"
 import BookItem from "./BookItem"
@@ -15,9 +15,26 @@ function BookScroll({ next, hasMore, books, count }: Props) {
     <InfiniteScroll
       scrollThreshold={0.6}
       next={next}
-      endMessage={<>end...</>}
+      endMessage={
+        count < 0 ? (
+          <></>
+        ) : (
+          <div style={{ textAlign: "center", paddingTop: "50px" }}>
+            {books.length < 1
+              ? "😔 There is no such book... 😔"
+              : "💪Yay! You have seen it all👍"}
+          </div>
+        )
+      }
       hasMore={hasMore}
-      loader={<>Loading...</>}
+      loader={
+        <Grid
+          display="grid"
+          sx={{ overflow: "hidden", placeItems: "center", paddingTop: "12px" }}
+        >
+          <CircularProgress />
+        </Grid>
+      }
       dataLength={books.length}
     >
       <Grid container spacing={4} columns={{ xs: 12, sm: 16, md: 20 }}>
