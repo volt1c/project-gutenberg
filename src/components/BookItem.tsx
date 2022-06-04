@@ -103,10 +103,16 @@ function BookItem({ book }: BookItemProps) {
           alt="random"
         />
         <CardContent sx={{ flexGrow: 1 }}>
-          <Typography gutterBottom variant="h5" component="h2" height="64px">
+          <Typography
+            gutterBottom
+            variant="h5"
+            component="h2"
+            height="64px"
+            overflow="hidden"
+          >
             {short(book?.title, 30)}
           </Typography>
-          <Typography height="72px">
+          <Typography height="72px" overflow="hidden">
             {short(book?.description ?? "No description", 80)}
           </Typography>
           <Typography variant="caption" component="p">
