@@ -40,7 +40,7 @@ function BookItem({ book }: BookItemProps) {
   }, [auth.isReady, auth.user, book])
 
   const short = (str: string, newLen: number, end = "...") =>
-    str.length > newLen ? str.slice(0, newLen) + end : str
+    str.length > newLen ? str.slice(0, newLen - 3) + end : str
 
   return (
     <>
@@ -55,7 +55,7 @@ function BookItem({ book }: BookItemProps) {
           <CardMedia
             sx={{
               objectFit: "cover",
-              height: "425px",
+              height: "400px",
             }}
             component="img"
             image={
@@ -66,22 +66,22 @@ function BookItem({ book }: BookItemProps) {
             alt="random"
           />
         ) : (
-          <Skeleton height="425px" animation="wave" variant="rectangular" />
+          <Skeleton height="400px" animation="wave" variant="rectangular" />
         )}
         <CardContent sx={{ flexGrow: 1 }}>
-          <Typography gutterBottom variant="h5" component="h2">
-            {book ? short(book?.title, 60) : <Skeleton />}
+          <Typography gutterBottom variant="h5" component="h2" height="64px">
+            {book ? short(book?.title, 30) : <Skeleton />}
           </Typography>
-          <Typography>
+          <Typography height="72px">
             {book ? (
-              short(book?.description ?? "No description", 120)
+              short(book?.description ?? "No description", 80)
             ) : (
               <Skeleton />
             )}
           </Typography>
           <Typography variant="caption" component="p">
             {book ? (
-              short(book?.agents.map((a) => a.person).join(", "), 60)
+              short(book?.agents.map((a) => a.person).join(", "), 40)
             ) : (
               <Skeleton />
             )}
