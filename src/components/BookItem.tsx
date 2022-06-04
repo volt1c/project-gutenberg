@@ -55,8 +55,7 @@ function BookItem({ book }: BookItemProps) {
           <CardMedia
             sx={{
               objectFit: "cover",
-              minHeight: "425px",
-              maxHeight: "625px",
+              height: "425px",
             }}
             component="img"
             image={
