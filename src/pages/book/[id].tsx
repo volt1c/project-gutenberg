@@ -12,7 +12,7 @@ import {
   List,
   Skeleton,
 } from "@mui/material"
-import { useRouter } from "next/router"
+import { Router, useRouter } from "next/router"
 import { useEffect, useState } from "react"
 import { IBook } from "../../types/api/book"
 import { fetchBook } from "../../utils/fetchApi"
@@ -24,6 +24,12 @@ import {
 import ReadDialog from "../../components/ReadDialog"
 import ResourceItem from "../../components/ResourceItem"
 import Head from "next/head"
+import { useAuthContext } from "../../contexts/AuthContext"
+import {
+  addFavoriteBook,
+  deleteFavoriteBook,
+  isFavorite,
+} from "../../firebase/firestore"
 
 function BookIdPage() {
   const router = useRouter()
@@ -32,6 +38,14 @@ function BookIdPage() {
   const [book, setBook] = useState<IBook>()
   const [open, setOpen] = useState(false)
   const [src, setSrc] = useState<string>("")
+  const [isFav, setIsFav] = useState(false)
+
+  const auth = useAuthContext()
+
+  useEffect(() => {
+    if (book && auth.user)
+      isFavorite(auth.user.uid, book.id).then((b) => setIsFav(b))
+  }, [auth.isReady, auth.user, book])
 
   useEffect(() => {
     if (!router.isReady) return
@@ -123,19 +137,50 @@ function BookIdPage() {
                   spacing={2}
                   justifyContent="center"
                 >
-                  <Button
-                    onClick={() => {
-                      setSrc(
-                        findWebsiteResource(book?.resources ?? [])?.uri ?? ""
-                      )
-                      setOpen(true)
-                    }}
-                  >
-                    Read
-                  </Button>
-                  <IconButton onClick={() => console.log("add to favorites")}>
-                    <Star />
-                  </IconButton>
+                  {book ? (
+                    <>
+                      <Button
+                        onClick={() => {
+                          setSrc(
+                            findWebsiteResource(book?.resources ?? [])?.uri ??
+                              ""
+                          )
+                          setOpen(true)
+                        }}
+                      >
+                        Read
+                      </Button>
+                      <IconButton
+                        onClick={() => {
+                          if (auth.user?.uid && book) {
+                            ;(async () => {
+                              if (isFav)
+                                await deleteFavoriteBook(
+                                  auth.user?.uid ?? "",
+                                  book?.id
+                                )
+                              else
+                                await addFavoriteBook(
+                                  auth.user?.uid ?? "",
+                                  book?.id
+                                )
+                              setIsFav(!isFav)
+                            })()
+
+                            return
+                          }
+                          router.push("/signin")
+                        }}
+                      >
+                        <Star sx={{ fill: isFav ? "yellow" : "inherit" }} />
+                      </IconButton>
+                    </>
+                  ) : (
+                    <>
+                      <Skeleton width={48} height={24} variant="text" />
+                      <Skeleton variant="circular" width={24} height={24} />
+                    </>
+                  )}
                 </Stack>
                 <Grid item xs={12} md={6}>
                   <Typography
