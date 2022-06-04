@@ -146,24 +146,26 @@ function BookIdPage() {
                     Resources
                   </Typography>
                   <List>
-                    {book?.resources.map((r, idx) => (
-                      <ResourceItem
-                        key={idx}
-                        resource={r}
-                        onClick={(r, m) => {
-                          if (
-                            !m.isZip &&
-                            (m.type == ResourceType.Html ||
-                              m.type == ResourceType.PlainText)
-                          ) {
-                            setSrc(r.uri)
-                            setOpen(true)
-                          } else {
-                            window.open(r.uri, "_blank")
-                          }
-                        }}
-                      />
-                    ))}
+                    {(book?.resources ?? Array(10).fill(undefined)).map(
+                      (r, idx) => (
+                        <ResourceItem
+                          key={idx}
+                          resource={r}
+                          onClick={(r, m) => {
+                            if (
+                              !m.isZip &&
+                              (m.type == ResourceType.Html ||
+                                m.type == ResourceType.PlainText)
+                            ) {
+                              setSrc(r.uri)
+                              setOpen(true)
+                            } else {
+                              window.open(r.uri, "_blank")
+                            }
+                          }}
+                        />
+                      )
+                    )}
                   </List>
                 </Grid>
               </Box>

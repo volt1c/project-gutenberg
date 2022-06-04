@@ -14,57 +14,71 @@ import {
   ListItemAvatar,
   Avatar,
   ListItemText,
+  Skeleton,
 } from "@mui/material"
 import { IResource } from "../types/api"
 import { defineResourceMeta, IResourceMeta } from "../utils/bookResources"
 
 interface ResourceItemProps {
-  resource: IResource
-  onClick: (r: IResource, m: IResourceMeta) => void
+  resource?: IResource
+  onClick?: (r: IResource, m: IResourceMeta) => void
 }
 
-function ResourceItem({ resource, onClick }: ResourceItemProps) {
+function ResourceItem({ resource, onClick = (r, m) => {} }: ResourceItemProps) {
+  if (!resource)
+    return (
+      <ListItem>
+        <ListItemAvatar>
+          <Avatar>
+            <Skeleton
+              height="100%"
+              width="100%"
+              variant="circular"
+              animation="wave"
+            />
+          </Avatar>
+        </ListItemAvatar>
+        <ListItemText
+          primary={<Skeleton variant="text" />}
+          secondary={<Skeleton variant="text" />}
+        />
+      </ListItem>
+    )
+
   const meta = defineResourceMeta(resource)
+
+  const getActionIcon = (meta: IResourceMeta) => {
+    if (meta.isEbook) return <Download />
+    if (meta.isCover) return <ImageIcon />
+    if (meta.isZip) return <Download />
+    if (meta.type == "text/plain") return <ReadMore />
+    if (meta.type == "text/html") return <ReadMore />
+    return <InsertDriveFile />
+  }
+
+  const getAvatarIcon = (meta: IResourceMeta) => {
+    if (meta.isEbook) return <Book />
+    if (meta.isCover) return <ImageIcon />
+    if (meta.isZip) return <FolderZip />
+    if (meta.type == "text/plain") return <TextSnippet />
+    if (meta.type == "text/html") return <Code />
+    return <InsertDriveFile />
+  }
+
   return (
     <ListItem
       secondaryAction={
         <IconButton
           edge="end"
-          aria-label="delete"
+          aria-label="action"
           onClick={() => onClick(resource, meta)}
         >
-          {meta.isEbook ? (
-            <Download />
-          ) : meta.isCover ? (
-            <ImageIcon />
-          ) : meta.isZip ? (
-            <Download />
-          ) : meta.type == "text/plain" ? (
-            <ReadMore />
-          ) : meta.type == "text/html" ? (
-            <ReadMore />
-          ) : (
-            <InsertDriveFile />
-          )}
+          {getActionIcon(meta)}
         </IconButton>
       }
     >
       <ListItemAvatar>
-        <Avatar>
-          {meta.isEbook ? (
-            <Book />
-          ) : meta.isCover ? (
-            <ImageIcon />
-          ) : meta.isZip ? (
-            <FolderZip />
-          ) : meta.type == "text/plain" ? (
-            <TextSnippet />
-          ) : meta.type == "text/html" ? (
-            <Code />
-          ) : (
-            <InsertDriveFile />
-          )}
-        </Avatar>
+        <Avatar>{getAvatarIcon(meta)}</Avatar>
       </ListItemAvatar>
       <ListItemText primary={meta.type} secondary={resource.type} />
     </ListItem>
