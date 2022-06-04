@@ -37,7 +37,7 @@ function BookScroll({ next, hasMore, books, count }: Props) {
       }
       dataLength={books.length}
     >
-      <Grid container spacing={4} columns={{ xs: 12, sm: 16, md: 20 }}>
+      <Grid container spacing={4} columns={{ xs: 12, sm: 12, md: 16, xl: 20 }}>
         {[
           ...books,
           ...(count == -1 || hasMore
@@ -46,7 +46,7 @@ function BookScroll({ next, hasMore, books, count }: Props) {
               )
             : []),
         ].map((book, idx) => (
-          <Grid item key={idx} xs={12} sm={6} md={4}>
+          <Grid item key={idx} xs={12} sm={6} md={4} xl={4}>
             <BookItem book={book} />
           </Grid>
         ))}
