@@ -121,7 +121,7 @@ function BookItem({ book }: BookItemProps) {
                   Router.push("/signin")
                 }}
               >
-                <Star color={isFav ? "primary" : "inherit"} />
+                <Star sx={{ fill: isFav ? "yellow" : "inherit" }} />
               </IconButton>
             </>
           ) : (
