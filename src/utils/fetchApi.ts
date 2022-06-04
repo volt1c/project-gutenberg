@@ -49,8 +49,14 @@ export async function fetchLanguages() {
   return langs
 }
 
-export async function fetchBooksByIds(ids: number[]) {
+export async function fetchBooksByIds(
+  ids: number[],
+  valid?: (book: IBook) => boolean
+) {
   const books = []
-  for (let i = 0; i < ids.length; i++) books.push(await fetchBook(ids[i]))
+  for (let i = 0; i < ids.length; i++) {
+    const book = await fetchBook(ids[i])
+    if (valid ? valid(book) : true) books.push(book)
+  }
   return books
 }
