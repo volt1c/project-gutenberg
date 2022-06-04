@@ -22,7 +22,7 @@ function BookScroll({ next, hasMore, books, count }: Props) {
           <div style={{ textAlign: "center", paddingTop: "50px" }}>
             {books.length < 1
               ? "😔 There is no such book... 😔"
-              : "💪Yay! You have seen it all👍"}
+              : "💪 Yay! You have seen it all 👍"}
           </div>
         )
       }
