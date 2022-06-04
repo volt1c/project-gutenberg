@@ -18,8 +18,9 @@ const Home: NextPage = () => {
   return (
     <div>
       <Head>
-        <title>Project Gutenberg - Home</title>
+        <title>Project Gutenberg | Home</title>
       </Head>
+
       <Box
         sx={{
           bgcolor: "background.paper",

@@ -8,6 +8,7 @@ import { IBook, IBookFilters } from "../../types/api"
 import { fetchBooksWithFilters } from "../../utils/fetchApi"
 import { useRouter } from "next/router"
 import InfiniteScrollBook from "../../components/BookScroll"
+import Head from "next/head"
 
 function BookPage() {
   const [open, setOpen] = useState(false)
@@ -56,62 +57,71 @@ function BookPage() {
   }, [router.query])
 
   return (
-    <main>
-      <Container sx={{ py: 4 }} maxWidth="xl">
-        <Stack direction="row" spacing={{ sm: 2 }} sx={{ py: 2 }}>
-          <Paper
-            component="form"
-            sx={{
-              p: "2px 4px",
-              display: "flex",
-              alignItems: "center",
-              flexGrow: 1,
-            }}
-            onSubmit={(event: FormEvent<HTMLFormElement>) => {
-              event.preventDefault()
-              search({ search: searchInput.current?.value })
-            }}
-          >
-            <InputBase
-              sx={{ ml: 1, flex: 1 }}
-              placeholder="Search for books..."
-              inputProps={{
-                "aria-label": "search for books",
-                name: "search",
-                ref: searchInput,
-                defaultValue: router.query.search ?? "",
+    <>
+      <Head>
+        <title>
+          Project Gutenberg |{" "}
+          {router.query.search ? router.query.search : "Books List"}
+        </title>
+      </Head>
+
+      <main>
+        <Container sx={{ py: 4 }} maxWidth="xl">
+          <Stack direction="row" spacing={{ sm: 2 }} sx={{ py: 2 }}>
+            <Paper
+              component="form"
+              sx={{
+                p: "2px 4px",
+                display: "flex",
+                alignItems: "center",
+                flexGrow: 1,
               }}
-            />
-            <IconButton type="submit" sx={{ p: "10px" }} aria-label="search">
-              <SearchIcon />
-            </IconButton>
-          </Paper>
-          <Button variant="contained" onClick={() => setOpen(true)}>
-            Filters
-          </Button>
-        </Stack>
-        <InfiniteScrollBook
-          next={() => {
-            fetchBooksWithFilters({ page }).then((bookPage) => {
-              setBooks([...books, ...bookPage.results])
-              setPage(page + 1)
-            })
+              onSubmit={(event: FormEvent<HTMLFormElement>) => {
+                event.preventDefault()
+                search({ search: searchInput.current?.value })
+              }}
+            >
+              <InputBase
+                sx={{ ml: 1, flex: 1 }}
+                placeholder="Search for books..."
+                inputProps={{
+                  "aria-label": "search for books",
+                  name: "search",
+                  ref: searchInput,
+                  defaultValue: router.query.search ?? "",
+                }}
+              />
+              <IconButton type="submit" sx={{ p: "10px" }} aria-label="search">
+                <SearchIcon />
+              </IconButton>
+            </Paper>
+            <Button variant="contained" onClick={() => setOpen(true)}>
+              Filters
+            </Button>
+          </Stack>
+          <InfiniteScrollBook
+            next={() => {
+              fetchBooksWithFilters({ page }).then((bookPage) => {
+                setBooks([...books, ...bookPage.results])
+                setPage(page + 1)
+              })
+            }}
+            hasMore={hasMore()}
+            books={books}
+            count={count}
+          />
+        </Container>
+        <FiltersDialog
+          defaultFilters={{ ...(router.query as IBookFilters) }}
+          open={open}
+          onClose={() => setOpen(false)}
+          onApply={(f) => {
+            search({ search: searchInput.current?.value, ...f })
+            setOpen(false)
           }}
-          hasMore={hasMore()}
-          books={books}
-          count={count}
         />
-      </Container>
-      <FiltersDialog
-        defaultFilters={{ ...(router.query as IBookFilters) }}
-        open={open}
-        onClose={() => setOpen(false)}
-        onApply={(f) => {
-          search({ search: searchInput.current?.value, ...f })
-          setOpen(false)
-        }}
-      />
-    </main>
+      </main>
+    </>
   )
 }
 

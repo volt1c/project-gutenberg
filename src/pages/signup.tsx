@@ -9,7 +9,7 @@ import Box from "@mui/material/Box"
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined"
 import Typography from "@mui/material/Typography"
 import Container from "@mui/material/Container"
-import { createTheme, ThemeProvider } from "@mui/material/styles"
+import Head from "next/head"
 import { IAuthResult, ResultType } from "../types/authResult"
 import { Alert } from "@mui/material"
 import { useAuthContext } from "../contexts/AuthContext"
@@ -40,6 +40,10 @@ export default function SignUp() {
 
   return (
     <>
+      <Head>
+        <title>Project Gutenberg | Sign Up</title>
+      </Head>
+
       <Container component="main" maxWidth="xs">
         <CssBaseline />
         <Box

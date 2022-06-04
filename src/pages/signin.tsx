@@ -7,6 +7,7 @@ import Checkbox from "@mui/material/Checkbox"
 import Link from "@mui/material/Link"
 import Grid from "@mui/material/Grid"
 import Box from "@mui/material/Box"
+import Head from "next/head"
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined"
 import Typography from "@mui/material/Typography"
 import Container from "@mui/material/Container"
@@ -60,6 +61,10 @@ function SignIn() {
 
   return (
     <>
+      <Head>
+        <title>Project Gutenberg | Sign In</title>
+      </Head>
+
       <Container component="main" maxWidth="xs">
         <CssBaseline />
         <Box
