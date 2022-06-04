@@ -11,7 +11,9 @@ function Header() {
   return (
     <AppBar position="relative">
       <Toolbar>
-        <Icon sx={{ mr: 2, transform: "scale(1.5)" }} />
+        <Link href="/">
+          <Icon sx={{ mr: 2, transform: "scale(1.5)" }} />
+        </Link>
         <Link href="/">
           <Typography
             variant="h6"
