@@ -49,7 +49,11 @@ function ReadDialog({ open, onClose, bookSrc }: ReadDialogProps) {
             </Typography>
           </Toolbar>
         </AppBar>
-        <iframe src={bookSrc} height="100%"></iframe>
+        <iframe
+          src={bookSrc}
+          height="100%"
+          style={{ background: "white" }}
+        ></iframe>
       </Dialog>
     </div>
   )
